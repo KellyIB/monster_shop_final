@@ -41,7 +41,7 @@ RSpec.describe 'Discount Creation' do
       expect(page).to have_content("Status: active")
 end
 
-    it "can't create with incomplete fields" do
+    it "can't create with incomplete fields or percent over 100 or less than 0" do
       visit "/merchant/discounts"
 
       click_link "Create New Discount"
@@ -50,6 +50,34 @@ end
 
       fill_in 'percent_off', with: "25"
       fill_in 'quantity_threshold', with: ""
+      fill_in 'status', with: "active"
+
+      click_on "Save Discount"
+
+      expect(current_path).to eq("/merchant/discounts/new")
+
+      visit "/merchant/discounts"
+
+      click_link "Create New Discount"
+
+      expect(current_path).to eq("/merchant/discounts/new")
+
+      fill_in 'percent_off', with: "101"
+      fill_in 'quantity_threshold', with: "30"
+      fill_in 'status', with: "active"
+
+      click_on "Save Discount"
+
+      expect(current_path).to eq("/merchant/discounts/new")
+
+      visit "/merchant/discounts"
+
+      click_link "Create New Discount"
+
+      expect(current_path).to eq("/merchant/discounts/new")
+
+      fill_in 'percent_off', with: "-1"
+      fill_in 'quantity_threshold', with: "30"
       fill_in 'status', with: "active"
 
       click_on "Save Discount"
