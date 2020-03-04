@@ -20,7 +20,7 @@ class Merchant::DiscountsController < Merchant::BaseController
     else
       @discount = Discount.find(params[:discount_id])
       if (discount_params)[:percent_off].to_f > 100.0 || (discount_params)[:percent_off].to_f < 0.0
-        flash[:failure] = "Percent off can't be greater than 100"
+        flash[:failure] = "Percent off can't be greater than 100 or less than 0"
         redirect_to "/merchant/discounts/#{@discount.id}/edit"
       elsif @discount.update(discount_params)
         redirect_to "/merchant/discounts/#{@discount.id}"
@@ -47,7 +47,7 @@ class Merchant::DiscountsController < Merchant::BaseController
     merchant = current_user.merchant
     discount = merchant.discounts.new(discount_params)
     if (discount_params)[:percent_off].to_f > 100.0 || (discount_params)[:percent_off].to_f < 0.0
-      flash[:failure] = "Percent off can't be greater than 100"
+      flash[:failure] = "Percent off can't be greater than 100 or less than 0"
       redirect_to "/merchant/discounts/new"
     elsif discount.save
       flash[:success] = "Discount Was Created!"
