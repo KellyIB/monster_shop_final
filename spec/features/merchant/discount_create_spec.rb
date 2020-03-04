@@ -19,7 +19,7 @@ RSpec.describe 'Discount Creation' do
 
       expect(current_path).to eq("/merchant/discounts/new")
 
-      fill_in 'percent_off', with: "25"
+      fill_in 'percent_off', with: "2.5"
       fill_in 'quantity_threshold', with: "50"
       fill_in 'status', with: "active"
 
@@ -29,14 +29,14 @@ RSpec.describe 'Discount Creation' do
 
       expect(current_path).to eq("/merchant/discounts")
 
-      expect(page).to have_content("Percent off: 25")
+      expect(page).to have_content("Percent off: 2.5")
       expect(page).to have_content("Quantity Threshold: 50")
       expect(page).to have_content("Status: active")
 
       visit "/merchant/discounts/#{discount.id}"
 
       expect(page).to have_content(discount.id)
-      expect(page).to have_content("Percent off: 25")
+      expect(page).to have_content("Percent off: 2.5")
       expect(page).to have_content("Amount needed to trigger discount: 50")
       expect(page).to have_content("Status: active")
 end
