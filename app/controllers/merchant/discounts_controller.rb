@@ -13,12 +13,16 @@ class Merchant::DiscountsController < Merchant::BaseController
   end
 
   def update
+
     if params.keys.include?("change_status")
       change_status
       redirect_to "/merchant/discounts/#{@discount.id}"
     else
       @discount = Discount.find(params[:discount_id])
-      if @discount.update(discount_params)
+      if (discount_params)[:percent_off].to_f > 100.0 || (discount_params)[:percent_off].to_f < 0.0
+        flash[:failure] = "Percent off can't be greater than 100"
+        redirect_to "/merchant/discounts/#{@discount.id}/edit"
+      elsif @discount.update(discount_params)
         redirect_to "/merchant/discounts/#{@discount.id}"
       else
         generate_flash(@discount)
@@ -42,7 +46,10 @@ class Merchant::DiscountsController < Merchant::BaseController
   def create
     merchant = current_user.merchant
     discount = merchant.discounts.new(discount_params)
-    if discount.save
+    if (discount_params)[:percent_off].to_f > 100.0 || (discount_params)[:percent_off].to_f < 0.0
+      flash[:failure] = "Percent off can't be greater than 100"
+      redirect_to "/merchant/discounts/new"
+    elsif discount.save
       flash[:success] = "Discount Was Created!"
       redirect_to "/merchant/discounts"
     else

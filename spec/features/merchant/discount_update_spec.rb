@@ -50,7 +50,7 @@ RSpec.describe 'Discount Update Page' do
       expect(page).to_not have_content("Status: active")
     end
 
-    it "can't edit with incomplete fields" do
+    it "can't edit with incomplete fields or percent over 100" do
       visit "/merchant/discounts/#{@discount1.id}"
 
       click_link "Edit Discount"
@@ -73,6 +73,49 @@ RSpec.describe 'Discount Update Page' do
       expect(find_field(:quantity_threshold).value.to_i).to eq(@discount1.quantity_threshold)
       expect(find_field(:status).value).to eq(@discount1.status)
 
+      visit "/merchant/discounts/#{@discount1.id}"
+
+      click_link "Edit Discount"
+
+      expect(current_path).to eq("/merchant/discounts/#{@discount1.id}/edit")
+
+      expect(find_field(:percent_off).value.to_i).to eq(@discount1.percent_off)
+      expect(find_field(:quantity_threshold).value.to_i).to eq(@discount1.quantity_threshold)
+      expect(find_field(:status).value).to eq(@discount1.status)
+
+      fill_in 'percent_off', with: "101"
+      fill_in 'quantity_threshold', with: "10"
+      fill_in 'status', with: "active"
+
+
+      click_on "Update Discount"
+
+      expect(current_path).to eq("/merchant/discounts/#{@discount1.id}/edit")
+      expect(find_field(:percent_off).value.to_i).to eq(@discount1.percent_off)
+      expect(find_field(:quantity_threshold).value.to_i).to eq(@discount1.quantity_threshold)
+      expect(find_field(:status).value).to eq(@discount1.status)
+
+      visit "/merchant/discounts/#{@discount1.id}"
+
+      click_link "Edit Discount"
+
+      expect(current_path).to eq("/merchant/discounts/#{@discount1.id}/edit")
+
+      expect(find_field(:percent_off).value.to_i).to eq(@discount1.percent_off)
+      expect(find_field(:quantity_threshold).value.to_i).to eq(@discount1.quantity_threshold)
+      expect(find_field(:status).value).to eq(@discount1.status)
+
+      fill_in 'percent_off', with: "-1"
+      fill_in 'quantity_threshold', with: "10"
+      fill_in 'status', with: "active"
+
+
+      click_on "Update Discount"
+
+      expect(current_path).to eq("/merchant/discounts/#{@discount1.id}/edit")
+      expect(find_field(:percent_off).value.to_i).to eq(@discount1.percent_off)
+      expect(find_field(:quantity_threshold).value.to_i).to eq(@discount1.quantity_threshold)
+      expect(find_field(:status).value).to eq(@discount1.status)
     end
 # user story 5
     it "can't update the percent or threshold of the discount if it has been used in an order" do
@@ -87,12 +130,6 @@ RSpec.describe 'Discount Update Page' do
     end
 
     it "can change the status of a discount if it has or has not been used" do
-#       @order_item_1 = @order_1.order_items.create!(item: @hippo, price: @hippo.price, quantity: 2, fulfilled: false)
-#       @order_item_2 = @order_2.order_items.create!(item: @hippo, price: @hippo.price, quantity: 2, fulfilled: true)
-#       @order_item_3 = @order_2.order_items.create!(item: @ogre, price: @ogre.price, quantity: 2, fulfilled: false, discount_id: @discount3.id)
-#       @order_item_4 = @order_3.order_items.create!(item: @giant, price: @giant.price, quantity: 2, fulfilled: false, discount_id: @discount4.id)
-# 3 inactive, been used.
-# 4 active, been used.
 
       visit "/merchant/discounts/#{@discount1.id}"
 
